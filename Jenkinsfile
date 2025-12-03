@@ -18,8 +18,8 @@ pipeline {
 
         stage('Code Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/hwafa/atelier-jenkins.git',
+                git branch: 'main',
+                    url: 'https://github.com/jihenammar/StudentsManagement.git',
                     credentialsId: 'jenkins-example-github-pat'
             }
         }
@@ -43,3 +43,4 @@ pipeline {
         }
     }
 }
+
