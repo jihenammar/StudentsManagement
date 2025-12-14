@@ -49,7 +49,7 @@ pipeline {
       steps {
         withCredentials([
           usernamePassword(
-            credentialsId: "${DOCKER_CRED}",
+            credentialsId: "${dockercreds}",
             usernameVariable: 'DH_USER',
             passwordVariable: 'DH_PASS'
           )
@@ -73,3 +73,4 @@ pipeline {
     failure { echo "Pipeline failed" }
   }
 }
+
