@@ -11,7 +11,7 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout scm
-        script { 
+        script {
           echo "Branch: ${env.BRANCH_NAME ?: 'unknown'}"
         }
       }
@@ -38,7 +38,6 @@ pipeline {
       steps {
         script {
           def tag = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-
           sh "docker build -t ${DOCKER_IMAGE}:${tag} ."
           sh "docker tag ${DOCKER_IMAGE}:${tag} ${DOCKER_IMAGE}:latest"
         }
@@ -49,7 +48,7 @@ pipeline {
       steps {
         withCredentials([
           usernamePassword(
-            credentialsId: "${dockercreds}",
+            credentialsId: env.DOCKER_CRED,
             usernameVariable: 'DH_USER',
             passwordVariable: 'DH_PASS'
           )
@@ -73,4 +72,3 @@ pipeline {
     failure { echo "Pipeline failed" }
   }
 }
-
