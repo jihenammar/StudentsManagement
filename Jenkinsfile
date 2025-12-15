@@ -11,9 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-                script {
-                    echo "Branch: ${env.BRANCH_NAME ?: 'unknown'}"
-                }
+                echo "Branch: ${env.BRANCH_NAME ?: 'unknown'}"
             }
         }
 
@@ -31,11 +29,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                      mvn sonar:sonar \
-                      -Dsonar.projectKey=students-management \
-                      -Dsonar.projectName=StudentsManagement
-                    '''
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                        sh '''
+                          mvn sonar:sonar \
+                            -Dsonar.projectKey=students-management \
+                            -Dsonar.projectName=StudentsManagement \
+                            -Dsonar.login=$SONAR_TOKEN
+                        '''
+                    }
                 }
             }
         }
