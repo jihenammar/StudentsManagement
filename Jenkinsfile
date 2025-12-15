@@ -6,11 +6,6 @@ pipeline {
     DOCKER_CRED  = "dockercreds"
   }
 
-  tools {
-    maven 'Maven'
-    jdk 'JDK11'
-  }
-
   stages {
 
     stage('Checkout') {
@@ -72,12 +67,7 @@ pipeline {
   }
 
   post {
-    success {
-      echo "✅ Pipeline completed successfully"
-    }
-    failure {
-      echo "❌ Pipeline failed"
-    }
+    success { echo "✅ Pipeline completed successfully" }
+    failure { echo "❌ Pipeline failed" }
   }
 }
-
