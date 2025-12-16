@@ -32,7 +32,8 @@ pipeline {
                     sh '''
                         mvn sonar:sonar \
                           -Dsonar.projectKey=students-management \
-                          -Dsonar.projectName=StudentsManagement
+                          -Dsonar.projectName=StudentsManagement \
+                          -Dsonar.login=$SONAR_AUTH_TOKEN
                     '''
                 }
             }
@@ -84,4 +85,3 @@ pipeline {
         }
     }
 }
-
