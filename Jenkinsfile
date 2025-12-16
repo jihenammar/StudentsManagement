@@ -1,17 +1,11 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "jihenbenammar/devops"
-        DOCKER_CRED  = "dockercreds"
-    }
-
     stages {
 
         stage('Checkout') {
             steps {
                 checkout scm
-                echo "Branch: ${env.BRANCH_NAME ?: 'unknown'}"
             }
         }
 
@@ -19,69 +13,19 @@ pipeline {
             steps {
                 sh 'mvn clean verify'
             }
-            post {
-                success {
-                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-                }
-            }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=students-management \
-                          -Dsonar.projectName=StudentsManagement \
-                          -Dsonar.login=$SONAR_AUTH_TOKEN
+                      mvn sonar:sonar \
+                        -Dsonar.projectKey=students-management \
+                        -Dsonar.projectName=StudentsManagement \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
                     '''
                 }
             }
-        }
-
-        stage('Docker build') {
-            steps {
-                script {
-                    def tag = sh(
-                        script: 'git rev-parse --short HEAD',
-                        returnStdout: true
-                    ).trim()
-
-                    sh "docker build -t ${DOCKER_IMAGE}:${tag} ."
-                    sh "docker tag ${DOCKER_IMAGE}:${tag} ${DOCKER_IMAGE}:latest"
-                }
-            }
-        }
-
-        stage('Docker push') {
-            steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: env.DOCKER_CRED,
-                        usernameVariable: 'DH_USER',
-                        passwordVariable: 'DH_PASS'
-                    )
-                ]) {
-                    sh '''
-                        echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-
-                        TAG=$(git rev-parse --short HEAD)
-                        docker push ${DOCKER_IMAGE}:$TAG
-                        docker push ${DOCKER_IMAGE}:latest
-
-                        docker logout
-                    '''
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Pipeline succeeded"
-        }
-        failure {
-            echo "❌ Pipeline failed"
         }
     }
 }
