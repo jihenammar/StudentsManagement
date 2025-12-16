@@ -29,16 +29,11 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    withCredentials([
-                        string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')
-                    ]) {
-                        sh '''
-                          mvn sonar:sonar \
-                            -Dsonar.projectKey=students-management \
-                            -Dsonar.projectName=StudentsManagement \
-                            -Dsonar.login=$SONAR_TOKEN
-                        '''
-                    }
+                    sh '''
+                      mvn sonar:sonar \
+                        -Dsonar.projectKey=students-management \
+                        -Dsonar.projectName=StudentsManagement
+                    '''
                 }
             }
         }
