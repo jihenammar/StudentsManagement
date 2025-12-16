@@ -17,13 +17,19 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                      mvn sonar:sonar \
-                        -Dsonar.projectKey=students-management \
-                        -Dsonar.projectName=StudentsManagement \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
-                    '''
+                script {
+                    try {
+                        withSonarQubeEnv('SonarQube') {
+                            sh '''
+                              mvn sonar:sonar \
+                                -Dsonar.projectKey=students-management \
+                                -Dsonar.projectName=StudentsManagement \
+                                -Dsonar.login=$SONAR_AUTH_TOKEN
+                            '''
+                        }
+                    } catch (Exception e) {
+                        echo '⚠️ SonarQube indisponible, étape ignorée'
+                    }
                 }
             }
         }
