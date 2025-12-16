@@ -30,9 +30,9 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                      mvn sonar:sonar \
-                        -Dsonar.projectKey=students-management \
-                        -Dsonar.projectName=StudentsManagement
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=students-management \
+                          -Dsonar.projectName=StudentsManagement
                     '''
                 }
             }
@@ -62,13 +62,13 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                      echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
+                        echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
 
-                      TAG=$(git rev-parse --short HEAD)
-                      docker push ${DOCKER_IMAGE}:$TAG
-                      docker push ${DOCKER_IMAGE}:latest
+                        TAG=$(git rev-parse --short HEAD)
+                        docker push ${DOCKER_IMAGE}:$TAG
+                        docker push ${DOCKER_IMAGE}:latest
 
-                      docker logout
+                        docker logout
                     '''
                 }
             }
@@ -77,10 +77,11 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline succeeded: ${DOCKER_IMAGE}"
+            echo "✅ Pipeline succeeded"
         }
         failure {
             echo "❌ Pipeline failed"
         }
     }
 }
+
